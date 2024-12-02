@@ -24,7 +24,8 @@ public class OrdersPage extends AbstractComponent {
 
 	@FindBy(css = "tr td:nth-child(3)")
 	List<WebElement> productsTable;
-
+	
+	//new comments
 	@FindBy(css = ".totalRow button")
 	WebElement MoveToElement;
 	
