@@ -1,0 +1,115 @@
+When testing a table with download functionality and filter conditions, there are multiple key scenarios and edge cases to ensure everything works as expected. Here's a structured set of test scenarios covering all functional, UI, and edge behaviors:
+
+
+---
+
+✅ 1. Table Data Display (Pre-condition Check)
+
+[ ] Table loads with default or full dataset
+
+[ ] Columns are correctly displayed (headers and data match)
+
+[ ] Pagination works (if applicable)
+
+
+
+---
+
+✅ 2. Filter Functionality
+
+Test filters individually and in combination:
+
+📌 For each filter type (text, dropdown, date range, etc.):
+
+[ ] Apply valid filter — relevant data is shown
+
+[ ] Apply invalid/no-match filter — shows "No data found" or similar message
+
+[ ] Apply multiple filters together — combination results correctly displayed
+
+[ ] Clear filter resets table to original state
+
+[ ] Case sensitivity and trimming (e.g., entering "Test" vs " test ")
+
+[ ] Partial match support (e.g., typing "Pro" should show "Projector")
+
+
+
+---
+
+✅ 3. Download Functionality
+
+📥 Test the download button:
+
+[ ] Download with no filters applied — all data is downloaded
+
+[ ] Download after applying filters — only filtered data is downloaded
+
+[ ] File is downloaded in correct format (e.g., CSV, Excel, PDF)
+
+[ ] File name is correct and includes timestamp (if applicable)
+
+[ ] File contains all visible columns (and hidden columns, if configured)
+
+[ ] Download with 0 results (should download a blank file or show proper message)
+
+[ ] Large dataset download (performance and file size)
+
+
+
+---
+
+✅ 4. UI and UX Checks
+
+[ ] Filter fields and buttons are aligned properly
+
+[ ] Loading spinner shown when filtering/downloading
+
+[ ] Download button disabled while downloading (to avoid double-click)
+
+[ ] Toast or success message on download completion
+
+[ ] Proper tooltips or labels on filters and download button
+
+
+
+---
+
+✅ 5. Error and Boundary Scenarios
+
+[ ] Server/API failure during filter fetch — proper error shown
+
+[ ] Server/API failure during download — error handling works
+
+[ ] Download button disabled when no data available
+
+[ ] Input fields for filters accept valid formats only (e.g., date picker rejects text)
+
+
+
+---
+
+✅ 6. Accessibility and Cross-browser Testing
+
+[ ] Can filter using keyboard navigation
+
+[ ] Download button is accessible (via keyboard or screen reader)
+
+[ ] Consistent behavior across Chrome, Firefox, Edge, Safari
+
+
+
+---
+
+✅ 7. Security & Permissions
+
+[ ] Download functionality not accessible to unauthorized users (if applicable)
+
+[ ] Ensure no script injection possible via filter inputs
+
+
+
+---
+
+Would you like this formatted in an Excel test case template or a mind map diagram for better visualization?
+
