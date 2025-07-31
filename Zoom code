@@ -1,0 +1,52 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class ZoomAutomation {
+    public static void main(String[] args) {
+        // Set path if chromedriver is not in system PATH
+        // System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+        // Zoom meeting details
+        String meetingId = "1234567890";      // Replace with your Meeting ID
+        String meetingPassword = "yourpass";  // Replace with your meeting password
+        String participantName = "Your Name"; // Replace with your name
+
+        WebDriver driver = new ChromeDriver();
+
+        try {
+            driver.get("https://zoom.us/join");
+            Thread.sleep(3000);
+
+            // Enter Meeting ID
+            WebElement meetingIdField = driver.findElement(By.id("join-confno"));
+            meetingIdField.sendKeys(meetingId);
+
+            // Click Join button
+            driver.findElement(By.id("btnSubmit")).click();
+            Thread.sleep(5000);
+
+            // Enter Name
+            WebElement nameField = driver.findElement(By.id("inputname"));
+            nameField.clear();
+            nameField.sendKeys(participantName);
+            driver.findElement(By.id("joinBtn")).click();
+            Thread.sleep(5000);
+
+            // Enter Passcode
+            WebElement passwordField = driver.findElement(By.id("inputpasscode"));
+            passwordField.sendKeys(meetingPassword);
+            driver.findElement(By.id("joinBtn")).click();
+
+            // Wait to stay in meeting (optional)
+            Thread.sleep(15000); // You can increase this to stay longer
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser after automation
+            driver.quit();
+        }
+    }
+}
