@@ -1,0 +1,56 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Date;
+
+public class ShadowDomScreenshot {
+    public static void main(String[] args) {
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver"); // adjust path
+
+        WebDriver driver = new ChromeDriver();
+        try {
+            driver.get("https://your-app-url.example.com");
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            // Wait until the shadow host (e.g., editor-table) is present in DOM
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("editor-table")));
+
+            // Now fetch nested element inside shadow DOM chain. Adjust selectors based on your DOM:
+            // For example: editor-table -> wb-grid-row -> wb-grid-col -> wb-table
+            WebElement inner = wait.until(d -> {
+                WebElement el = ShadowDomUtils.getShadowElement(d,
+                        "editor-table",
+                        "wb-grid-row",       // replace with actual nested tags/classes if needed
+                        "wb-grid-col",
+                        "wb-table");
+                return (el != null && el.isDisplayed()) ? el : null;
+            });
+
+            // Optionally ensure clickable
+            wait.until(ExpectedConditions.elementToBeClickable(inner));
+
+            // Take screenshot (viewport)
+            if (driver instanceof TakesScreenshot screenshotTaker) {
+                File src = screenshotTaker.getScreenshotAs(OutputType.FILE);
+                String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                File dest = new File("popup_element_" + ts + ".png");
+                Files.copy(src.toPath(), dest.toPath());
+                System.out.println("Screenshot saved: " + dest.getAbsolutePath());
+            }
+
+        } catch (TimeoutException toe) {
+            System.err.println("Timed out waiting for shadow DOM element: " + toe.getMessage());
+        } catch (IOException ioe) {
+            System.err.println("Error saving screenshot: " + ioe.getMessage());
+        } finally {
+            driver.quit();
+        }
+    }
+}
