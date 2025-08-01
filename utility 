@@ -1,0 +1,37 @@
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
+
+public class ShadowDomUtils {
+
+    /**
+     * Traverse into nested shadow roots by providing a chain of selectors.
+     * Example: getShadowElement(driver, "editor-table", "wb-grid-row", "wb-table")
+     */
+    public static WebElement getShadowElement(WebDriver driver, String... selectors) {
+        StringBuilder script = new StringBuilder();
+        script.append("let el = document;");
+        for (int i = 0; i < selectors.length; i++) {
+            String sel = selectors[i];
+            if (i == 0) {
+                script.append("el = el.querySelector('").append(sel).append("');");
+            } else {
+                script.append("if (el) { el = el.shadowRoot ? el.shadowRoot.querySelector('")
+                      .append(sel)
+                      .append("') : el.querySelector('")
+                      .append(sel)
+                      .append("'); }");
+            }
+        }
+        script.append("return el;");
+
+        Object result = ((JavascriptExecutor) driver).executeScript(script.toString());
+        if (result instanceof WebElement) {
+            return (WebElement) result;
+        } else {
+            return null;
+        }
+    }
+}
