@@ -1,0 +1,19 @@
+<plugin>
+  <groupId>net.masterthought</groupId>
+  <artifactId>maven-cucumber-reporting</artifactId>
+  <version>5.7.0</version>
+  <executions>
+    <execution>
+      <id>execution</id>
+      <phase>verify</phase>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+      <configuration>
+        <projectName>Cucumber PDF Report</projectName>
+        <outputDirectory>${project.build.directory}/cucumber-html-report</outputDirectory>
+        <cucumberOutput>${project.build.directory}/cucumber.json</cucumberOutput>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
