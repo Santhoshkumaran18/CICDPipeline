@@ -1,0 +1,60 @@
+package your.package.name;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.awt.Desktop;
+
+public class Hooks {
+
+    private static boolean pdfGenerated = false;
+
+    @Before
+    public void beforeScenario(Scenario scenario) {
+        // Your existing before-scenario logic
+        System.out.println("Starting Scenario: " + scenario.getName());
+    }
+
+    @After
+    public void afterScenario(Scenario scenario) {
+        // Your existing after-scenario logic
+        System.out.println("Ending Scenario: " + scenario.getName());
+
+        // Generate PDF after last scenario (simulate with flag if needed)
+        if (!pdfGenerated) {
+            generateExtentReportPdf();
+            pdfGenerated = true;
+        }
+    }
+
+    private void generateExtentReportPdf() {
+        try {
+            String inputHtmlPath = new File("target/extent-report/ExtentReport.html").getAbsolutePath();
+            String outputPdfPath = "target/extent-report/ExtentReport.pdf";
+
+            try (OutputStream os = new FileOutputStream(outputPdfPath)) {
+                PdfRendererBuilder builder = new PdfRendererBuilder();
+                builder.useFastMode();
+                builder.withUri("file:///" + inputHtmlPath.replace("\\", "/"));
+                builder.toStream(os);
+                builder.run();
+                System.out.println("✅ Extent PDF Report generated at: " + outputPdfPath);
+            }
+
+            // Optionally auto-open the PDF
+            File pdfFile = new File(outputPdfPath);
+            if (pdfFile.exists()) {
+                Desktop.getDesktop().open(pdfFile);
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to generate Extent PDF report.");
+            e.printStackTrace();
+        }
+    }
+}
