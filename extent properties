@@ -1,0 +1,43 @@
+# ================= Extent Report Configuration =================
+
+# Report file location
+extent.reporter.spark.start=true
+extent.reporter.spark.out=target/extent-report/ExtentReport.html
+
+# Enable beautiful dark theme
+extent.reporter.spark.config.theme=dark
+
+# Document title and report name
+extent.reporter.spark.config.documentTitle=Automation Test Report
+extent.reporter.spark.config.reportName=Functional Test Execution Report
+
+# Enable step-wise logging (scenario steps visible)
+extent.reporter.spark.config.timelineEnabled=true
+
+# Timestamp format
+extent.reporter.spark.config.timeStampFormat=dd MMM yyyy HH:mm:ss
+
+# Add system/environment details
+systeminfo.Project Name=My Automation Project
+systeminfo.Environment=QA
+systeminfo.Browser=Chrome
+systeminfo.Base URL=https://your-base-url.com
+systeminfo.OS=Windows 11
+
+# Display category, device, author (if tags are used in tests or set via code)
+extent.reporter.spark.viewOrder=dashboard,test,category,device,author,exception,log
+
+# Logs view enabled
+extent.reporter.spark.enableOfflineMode=true
+
+# Chart visibility
+extent.reporter.spark.config.chartVisibilityOnOpen=true
+
+# Chart location
+extent.reporter.spark.config.chartLocation=bottom
+
+# Auto-open the report after execution (if supported in your setup)
+extent.reporter.spark.autoOpen=true
+
+# Encoding
+extent.reporter.spark.config.encoding=UTF-8
