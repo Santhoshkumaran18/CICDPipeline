@@ -1,0 +1,41 @@
+private void openLatestExtentReport() {
+    try {
+        File reportsFolder = new File("ExtentReports"); // Path to your main report folder
+
+        if (!reportsFolder.exists() || !reportsFolder.isDirectory()) {
+            System.out.println("ExtentReports folder not found.");
+            return;
+        }
+
+        File[] folders = reportsFolder.listFiles(File::isDirectory);
+
+        if (folders == null || folders.length == 0) {
+            System.out.println("No report folders found in ExtentReports.");
+            return;
+        }
+
+        // Manually find the latest modified folder (basic Java)
+        File latestFolder = folders[0];
+        long latestModifiedTime = latestFolder.lastModified();
+
+        for (int i = 1; i < folders.length; i++) {
+            if (folders[i].lastModified() > latestModifiedTime) {
+                latestFolder = folders[i];
+                latestModifiedTime = folders[i].lastModified();
+            }
+        }
+
+        // Inside latest folder, look for index.html
+        File reportFile = new File(latestFolder, "index.html");
+
+        if (reportFile.exists()) {
+            Desktop.getDesktop().browse(reportFile.toURI());
+            System.out.println("Opened Extent Report: " + reportFile.getAbsolutePath());
+        } else {
+            System.out.println("index.html not found in: " + latestFolder.getName());
+        }
+
+    } catch (Exception e) {
+        System.out.println("Exception while opening ExtentReport: " + e.getMessage());
+    }
+}
