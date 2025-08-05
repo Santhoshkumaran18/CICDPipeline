@@ -1,0 +1,56 @@
+<build>
+    <plugins>
+
+        <!-- Cucumber PDF Generator -->
+        <plugin>
+            <groupId>com.github.mkolisnyk</groupId>
+            <artifactId>cucumber-report-generator</artifactId>
+            <version>1.3.4</version>
+            <executions>
+                <execution>
+                    <id>execution</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                    <configuration>
+                        <sourceJsonReports>
+                            <param>${project.build.directory}/cucumber.json</param>
+                        </sourceJsonReports>
+                        <outputDirectory>${project.build.directory}/cucumber-pdf</outputDirectory>
+                        <projectName>My Project PDF Report</projectName>
+                        <reportTypes>
+                            <param>pdf</param>
+                        </reportTypes>
+                        <reportPrefix>My_Project_Report</reportPrefix>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Auto Open PDF -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+                <execution>
+                    <id>open-pdf</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>cmd</executable>
+                        <arguments>
+                            <argument>/c</argument>
+                            <argument>start</argument>
+                            <argument>${project.build.directory}/cucumber-pdf/My_Project_Report.pdf</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+    </plugins>
+</build>
