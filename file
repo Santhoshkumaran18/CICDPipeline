@@ -1,0 +1,60 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+public class ShadowDomExample {
+    public static void main(String[] args) {
+        // Set the system property for the ChromeDriver
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver"); // Update with actual path
+        
+        // Initialize the ChromeDriver
+        ChromeOptions options = new ChromeOptions();
+        WebDriver driver = new ChromeDriver(options);
+        
+        try {
+            // Navigate to the page
+            driver.get("http://localhost:4200"); // Replace with your URL
+
+            // Wait for the Shadow DOM to load
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            WebElement shadowHost = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#root"))); 
+
+            // Get the Shadow Root
+            WebElement shadowRoot = expandRootElement(shadowHost, driver);
+            
+            // Interact with elements inside Shadow DOM
+            WebElement header = shadowRoot.findElement(By.cssSelector(".wb-heading.headline"));
+            System.out.println("Header Text: " + header.getText());
+            
+            // Locate and interact with the input fields
+            WebElement tosKeyField = shadowRoot.findElement(By.cssSelector("input[name='tosKey']"));
+            tosKeyField.sendKeys("TestTOSKey");
+
+            WebElement domModelIdField = shadowRoot.findElement(By.cssSelector("input[name='domModelId']"));
+            domModelIdField.sendKeys("TestDOMModelId");
+            
+            // Click the 'Save' button
+            WebElement saveButton = shadowRoot.findElement(By.cssSelector("button[type='submit']"));
+            saveButton.click();
+            
+            // Wait for confirmation or success message (adjust as per your page)
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".success-message")));
+            System.out.println("Form submitted successfully!");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser
+            driver.quit();
+        }
+    }
+    
+    // Function to access the shadow root of an element
+    public static WebElement expandRootElement(WebElement element, WebDriver driver) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        WebElement shadowRoot = (WebElement) js.executeScript("return arguments[0].shadowRoot", element);
+        return shadowRoot;
+    }
+}
