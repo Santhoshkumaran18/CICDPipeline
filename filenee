@@ -1,0 +1,59 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class ShadowDomFinal {
+
+    public static void main(String[] args) {
+
+        // Set chromedriver path
+        System.setProperty("webdriver.chrome.driver", "C:/drivers/chromedriver.exe"); // <-- UPDATE
+
+        ChromeOptions options = new ChromeOptions();
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            driver.get("http://localhost:4200"); // <-- UPDATE YOUR APP URL
+
+            Thread.sleep(3000); // wait for page load – replace with wait later
+
+            // Step 1: Get wb-modal host
+            WebElement shadowHost = driver.findElement(By.cssSelector("wb-modal"));
+            System.out.println("Found <wb-modal> shadow host");
+
+            // Step 2: Get shadowRoot using JavaScript
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            Object rawShadowRoot = js.executeScript("return arguments[0].shadowRoot", shadowHost);
+
+            if (!(rawShadowRoot instanceof WebElement)) {
+                System.out.println("Shadow root is not a WebElement. Trying workaround.");
+            }
+
+            // Step 3: Cast and search inside
+            WebElement shadowRoot = (WebElement) js.executeScript("return arguments[0].shadowRoot", shadowHost);
+
+            // Step 4: Try to find the header
+            WebElement header = shadowRoot.findElement(By.cssSelector("h4.wb-heading.headline"));
+            System.out.println("Header Text: " + header.getText());
+
+            // Step 5: Try to find input fields
+            WebElement tosKeyField = shadowRoot.findElement(By.cssSelector("input[name='tosKey']"));
+            tosKeyField.sendKeys("TestTOSKey");
+
+            WebElement domModelIdField = shadowRoot.findElement(By.cssSelector("input[name='domModelId']"));
+            domModelIdField.sendKeys("TestDOMModelId");
+
+            // Step 6: Click the save button
+            WebElement saveButton = shadowRoot.findElement(By.cssSelector("button[type='submit']"));
+            saveButton.click();
+
+            System.out.println("Save button clicked successfully.");
+
+        } catch (Exception e) {
+            System.out.println("❌ Error Occurred:");
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+    }
+}
