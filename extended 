@@ -1,0 +1,31 @@
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+
+public class OpenExtentReport {
+    public static void openReport(String reportPath) {
+        try {
+            File htmlFile = new File(reportPath);
+            if (htmlFile.exists()) {
+                Desktop.getDesktop().browse(htmlFile.toURI()); // Opens in browser
+                // OR use .open() to open with default program (may still open in browser)
+                // Desktop.getDesktop().open(htmlFile);
+            } else {
+                System.out.println("Report not found at: " + reportPath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+@AfterSuite
+public void tearDownSuite() {
+    // flush the extent report
+    extent.flush();
+
+    // automatically open report
+    OpenExtentReport.openReport("test-output/ExtentReport.html");
+}
