@@ -1,0 +1,50 @@
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class OpenLatestExtentReport {
+
+    public static void openLatestReport() {
+        String baseDir = "test-output/ExtentReports";
+        File baseFolder = new File(baseDir);
+
+        if (baseFolder.exists() && baseFolder.isDirectory()) {
+            // Get all subdirectories sorted by last modified date (descending)
+            File[] subDirs = baseFolder.listFiles(File::isDirectory);
+            if (subDirs == null || subDirs.length == 0) {
+                System.out.println("No subdirectories found in: " + baseDir);
+                return;
+            }
+
+            Arrays.sort(subDirs, Comparator.comparingLong(File::lastModified).reversed());
+
+            // Assuming latest folder is first after sorting
+            File latestReportFolder = subDirs[0];
+            File reportFile = new File(latestReportFolder, "reports/CucumberExtentReport.html");
+
+            if (reportFile.exists()) {
+                try {
+                    Desktop.getDesktop().browse(reportFile.toURI());
+                    System.out.println("Opened report: " + reportFile.getAbsolutePath());
+                } catch (IOException e) {
+                    System.out.println("Failed to open report.");
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Report file not found at: " + reportFile.getAbsolutePath());
+            }
+        } else {
+            System.out.println("ExtentReports folder does not exist at: " + baseDir);
+        }
+    }
+}
+
+
+
+@AfterSuite
+public void tearDownSuite() {
+    extent.flush(); // flush your ExtentReports
+    OpenLatestExtentReport.openLatestReport(); // open the report
+}
