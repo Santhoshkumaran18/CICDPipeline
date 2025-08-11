@@ -1,0 +1,11 @@
+Feature: Access and manage Logistics Mapping in MB OAL UI
+	
+    @Sanity 
+    Scenario: Accessing the MB OAL UI Screen
+    Given the user is logged in as the local user
+    When the user clicked on the master datatables
+    Then the user clicks on Logistics Mapping
+    And the user clicks on New Mapping
+    And the user enter the values for all the fields and enter the date details 
+    And clicks on Save button
+    
