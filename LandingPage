@@ -1,0 +1,146 @@
+package com.mercedes.oal.pageObjects;
+
+import java.util.List;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+
+public class LandingPage extends BasePage {
+
+	public LandingPage(WebDriver driver) {
+		super(driver);
+	}
+
+	@FindBy(xpath = "//wb-text[@class='oal__logo wb-text hydrated']")
+	WebElement Brand_logo;
+
+	@FindBy(xpath = "//wb-heading[text()='Welcome to OAL, Santhosh']")
+	WebElement username;
+
+	@FindBy(xpath = "(//wb-tooltip/wb-header-tool-list-item/img)[3]")
+	WebElement masterData;
+
+	@FindBy(xpath = "//wb-heading[@tag='div' and text()='Logistics Mapping']")
+	WebElement LogisticsMappingPage;
+
+	@FindBy(xpath = "//button[text()=' New Mapping ']")
+	WebElement New_Mapping_Page;
+
+	@FindBy(css = "wb-modal")
+	WebElement modalHost;
+
+	@FindBy(css = ".wb-heading.headline")
+	WebElement header;
+
+	
+	public void Logo_Displayed() {
+		if (Brand_logo.isDisplayed()) {
+			System.out.println("Logo displayed successfully");
+		} else {
+			System.out.println("Logo is not displayed");
+		}
+	}
+
+	public void usernameValidation() {
+		System.out.println(username.getText());
+	}
+
+	public void masterDataClick() throws InterruptedException {
+		masterData.click();
+		Thread.sleep(1000);
+	}
+
+	public void clickingOnLogisticsMappingPage() throws InterruptedException {
+		LogisticsMappingPage.click();
+		Thread.sleep(2000);
+	}
+	
+	public void newMappingCreation() throws InterruptedException {
+		New_Mapping_Page.click();
+		Thread.sleep(1000);
+	}
+	
+	public void Value_Details() throws InterruptedException {
+		JavascriptExecutor js=(JavascriptExecutor)driver;
+		Actions a = new Actions(driver);
+		setInputValueInShadowDom(js, 0, "tosKey", "TOS3424");
+		setInputValueInShadowDom(js, 1, "domNode", "DOM3243");
+		setInputValueInShadowDom(js, 2, "shipToParty", "SHIP234");
+		
+		setInputMarketValueInShadowDom(js, 3, "search", "I");
+		WebElement searchitemnew=(WebElement)js.executeScript("return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col > wb-input > wb-input-action>wb-round-button>wb-icon')[0]");
+		a.doubleClick(searchitemnew).build().perform();
+				
+		List<WebElement> values = (List<WebElement>) js.executeScript(
+				"return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col >div>div>wb-list-group>wb-list-group-item')");
+		System.out.println(values.size());
+		for(int i=0;i<values.size();i++) {
+			WebElement element=(WebElement)js.executeScript("return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col >div>div>wb-list-group>wb-list-group-item')["+i+"]");
+			a.moveToElement(element).build().perform();
+			String country=element.getText();
+			if(country.equalsIgnoreCase("Italy")) {
+				System.out.println(element.getText());
+				element.click();
+				break;
+				
+			}
+			
+		}
+		
+		WebElement validr = (WebElement) js.executeScript(
+				"return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col > wb-input>span')[4]");
+		a.moveToElement(validr).build().perform();
+		
+		Thread.sleep(1000);
+		System.out.println(validr.getText());
+		a.moveToElement(validr).doubleClick().build().perform();
+		
+		js.executeScript("window.scrollTo(0,document.body.scrollHeight)");
+		setInputMarketValueInShadowDom(js, 4, "date", "10082025");
+		Thread.sleep(1000);
+		setInputMarketValueInShadowDom(js, 5, "date", "15082025");
+		
+		Thread.sleep(1000);
+		
+	}
+	
+	public void save_button() {
+		JavascriptExecutor js=(JavascriptExecutor)driver;
+		WebElement save_Button=(WebElement)js.executeScript("return document.querySelectorAll('wb-modal > wb-modal-level > wb-button')[1]");
+		save_Button.click();
+	}
+	
+	public static void setInputValueInShadowDom(JavascriptExecutor js, int wbInputIndex, String inputName,
+			String value) {
+		String script = String.format(
+				"return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col > wb-input')[%d].shadowRoot.querySelector('wb-grey-box > input[name=\"%s\"]')",
+				wbInputIndex, inputName);
+		WebElement inputElement = (WebElement) js.executeScript(script);
+		inputElement.sendKeys(value);
+	}
+
+	public static void setInputMarketValueInShadowDom(JavascriptExecutor js, int wbInputIndex, String inputName,
+			String value) {
+		String script = String.format(
+				"return document.querySelectorAll('wb-modal > wb-modal-level > wb-grid > wb-grid-row > wb-grid-col > wb-input')[%d].shadowRoot.querySelector('wb-grey-box > input[type=\"%s\"]')",
+				wbInputIndex, inputName);
+		WebElement inputElement = (WebElement) js.executeScript(script);
+		inputElement.sendKeys(value);
+	}
+
+	public static void typeTextLetterByLetter(WebElement element, String text, int delayMillis) {
+		for (char c : text.toCharArray()) {
+			element.sendKeys(Character.toString(c));
+			try {
+				Thread.sleep(delayMillis);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt(); // Restore interrupted status
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
