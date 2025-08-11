@@ -1,0 +1,68 @@
+package com.mercedes.oal.factory;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class BaseClass {
+	public static WebDriver driver;
+	public static Properties prop;
+	public static Logger logger;
+	public String browser;
+
+	public static WebDriver initializeBrowser() throws IOException {
+		if (getProperties().getProperty("execution_env").equalsIgnoreCase("local")) {
+			switch (getProperties().getProperty("browser").toLowerCase()) {
+			case "chrome":
+				ChromeOptions options = new ChromeOptions();
+				options.addArguments("--start-maximized");
+				WebDriverManager.chromedriver().setup();
+				driver = new ChromeDriver(options);
+				break;
+			case "microsoftedge":
+				EdgeOptions eOptions=new EdgeOptions();
+				eOptions.addArguments("--start-maxmimized");
+				WebDriverManager.edgedriver().setup();
+				driver = new EdgeDriver(eOptions);
+				break;
+			default:
+				System.out.println("No matching browser");
+				driver = null;
+
+			}
+
+		}
+		driver.manage().deleteAllCookies();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(5));
+
+		return driver;
+	}
+
+	public static Properties getProperties() throws IOException {
+		FileInputStream fis = new FileInputStream(
+				System.getProperty("user.dir") + "//src//test//resources//config.properties");
+		prop = new Properties();
+		prop.load(fis);
+		return prop;
+	}
+
+	public static WebDriver getDriver() {
+		return driver;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+}
