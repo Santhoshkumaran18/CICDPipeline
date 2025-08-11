@@ -1,0 +1,22 @@
+package com.mercedes.oal.testRunner;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+
+
+@CucumberOptions(features = "src/test/java/com/mercedes/oal/features/Logistics_Mapping.feature", 
+				glue="com/mercedes/oal/stepDefinitions",
+				plugin = { "pretty", 
+						"html:target/cucumber.html", 
+//						"json:target/cucumber.json",
+						"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:" }, 
+				monochrome = true, 
+				dryRun =false,
+				publish=true,
+				tags="@Sanity"
+
+)
+
+public class TestRunner extends AbstractTestNGCucumberTests{
+
+}
