@@ -1,0 +1,146 @@
+package com.mercedes.oal.stepDefinitions;
+
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Properties;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.service.ExtentService;
+import com.mercedes.oal.factory.BaseClass;
+
+import io.cucumber.java.After;
+import io.cucumber.java.AfterStep;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+
+public class CucumberHooks {
+	public WebDriver driver;
+	public Properties prop;
+
+	// This is start of the browser initialization and the Launch of our application
+	@Before
+	public void setup() throws IOException, InterruptedException {
+
+		driver = BaseClass.initializeBrowser();
+		prop = BaseClass.getProperties();
+		driver.get(BaseClass.getProperties().getProperty("url"));
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("document.body.style.zoom='90%'");
+		driver.manage().window().maximize();
+		Thread.sleep(4000);
+	}
+	
+	@After
+	public void afterSuite() throws InterruptedException {
+		ExtentService.getInstance().flush();
+		try {
+			Thread.sleep(2000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		openLatestReport();
+	}
+	
+
+//	@After
+	public void openCucumberReport() {
+		try {
+			File reportFile = new File(System.getProperty("user.dir") + "/target/cucumber.html");
+			if (reportFile.exists()) {
+				Desktop.getDesktop().browse(reportFile.toURI());
+				System.out.println("Opened Cucumber Report: " + reportFile.getAbsolutePath());
+			} else {
+				System.out.println("Cucumber report not found: " + reportFile.getAbsolutePath());
+			}
+		} catch (Exception e) {
+			System.out.println("Exception while opening the cucumber report: " + e.getMessage());
+		}
+	}
+
+	@AfterStep
+	public void addScreenshot(Scenario scenario) {
+
+		try {
+			TakesScreenshot ts = (TakesScreenshot) driver;
+			byte[] screenshot = ts.getScreenshotAs(OutputType.BYTES);
+			if (scenario.isFailed()) {
+				scenario.attach(screenshot, "image/png", "Failed Step");
+				System.out.println("Screenshot attached for Failed Step: ");
+
+			} else {
+				scenario.attach(screenshot, "image/png", "Passed Step");
+				System.out.println("Screenshot attached for Passed Step: ");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Exception while taking the screenshot: " + e.getMessage());
+		}
+
+	}
+	
+
+	public static void openLatestReport() throws InterruptedException {
+		Thread.sleep(5000);
+	    // Option 1: relative path (recommended)
+	    String baseDir = "test-output";
+
+	    // Option 2: absolute path (uncomment if needed)
+	    // String baseDir = "C:/MB_OAL_Test_Automation/test-output";
+
+	    File baseFolder = new File(System.getProperty("user.dir") + "/test-output");
+	    System.out.println(baseFolder);
+	    if (baseFolder.exists() && baseFolder.isDirectory()) {
+
+	        // Get only folders starting with "ExtentReports "
+	        File[] extentReportFolders = baseFolder.listFiles(file ->
+	                file.isDirectory() && file.getName().startsWith("ExtentReports "));
+
+	        if (extentReportFolders == null || extentReportFolders.length == 0) {
+	            System.out.println("No ExtentReports folders found inside test-output.");
+	            return;
+	        }
+
+	        // Sort folders by last modified date descending
+	        Arrays.sort(extentReportFolders, Comparator.comparingLong(File::lastModified).reversed());
+
+	        // Latest folder
+	        File latestFolder = extentReportFolders[0];
+	        System.out.println("Latest ExtentReports folder: " + latestFolder.getName());
+	        Thread.sleep(5000);
+	        // Build full path to the CucumberExtentReport.html
+	        File reportFile = new File(latestFolder, "/reports/CucumberExtentReport.html");
+	        System.out.println(reportFile);
+	        if (reportFile.exists()) {
+	            try {
+	                Desktop.getDesktop().browse(reportFile.toURI());
+	                System.out.println("Opened CucumberExtentReport.html : " + reportFile.getAbsolutePath());
+	            } catch (IOException e) {
+	                System.out.println("Failed to open report.");
+	                e.printStackTrace();
+	            }
+	        } else {
+	            System.out.println("Report file not found at: " + reportFile.getAbsolutePath());
+	        }
+	    } else {
+	        System.out.println("test-output folder does not exist at: " + baseDir);
+	    }
+	}
+	
+	@After
+	public void tearDown() {
+		if (driver != null) {
+			driver.quit();
+		}
+
+	}
+	
+	
+
+}
