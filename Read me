@@ -1,0 +1,108 @@
+MBOALTest_Automation 🚗🧪
+
+A scalable and modular test automation framework for validating Mercedes-Benz OAL web applications. Built using Java, Selenium WebDriver, TestNG, and Cucumber, this framework follows the Page Object Model (POM) and supports Behavior-Driven Development (BDD) for clear, maintainable test scenarios.
+
+---
+
+📦 Project Structure
+
+`plaintext
+MBOALTest_Automation/
+├── src/
+│   ├── main/
+│   │   └── java/com/mercedes/oal/
+│   │       ├── factory/               # WebDriverFactory: browser setup
+│   │       ├── pageObjects/           # Page classes: BasePage, MappingData
+│   │       └── utils/                 # Helpers: WebDriverUtils, ReportUtils
+│   ├── test/
+│   │   ├── java/com/mercedes/oal/
+│   │   │   ├── hooks/                 # CucumberHooks: setup/teardown
+│   │   │   ├── runner/                # TestRunner: Cucumber + TestNG
+│   │   │   └── tests/                 # Step definitions: AgentMapping, LocationsMapping
+│   │   └── resources/
+│   │       ├── features/              # Gherkin feature files
+│   │       └── config/                # Properties: config, log4j, extent
+├── logs/                              # Runtime logs
+├── reports/                           # HTML reports
+├── screenshots/                       # Screenshots on failure
+├── target/                            # Maven build output
+├── pom.xml                            # Maven dependencies
+├── README.md                          # Project documentation
+`
+
+---
+
+🧪 Tech Stack
+
+| Tool/Library         | Purpose                                      |
+|----------------------|----------------------------------------------|
+| Java 21              | Core language                                |
+| Selenium WebDriver   | Browser automation                           |
+| TestNG               | Test execution framework                     |
+| Cucumber             | BDD-style test definition                    |
+| Maven                | Build and dependency management              |
+| WebDriverManager     | Auto-handling browser drivers                |
+| Logback + SLF4J      | Logging framework                            |
+| Extent Reports       | Rich HTML reporting                          |
+| RestAssured          | API testing (optional)                       |
+| Apache POI           | Excel file handling                          |
+| Tesseract OCR        | Image-to-text recognition (optional)         |
+
+---
+
+⚙️ Configuration Files
+
+| File                | Description                                      |
+|---------------------|--------------------------------------------------|
+| config.properties | Stores environment settings (URL, browser, etc.) |
+| extent.properties | Customizes Extent report layout and metadata     |
+| log4j.properties  | Defines logging levels and output formats        |
+
+---
+
+🧩 Key Components
+
+🔹 Page Object Model (POM)
+Encapsulates UI elements and actions in reusable classes for maintainability.
+
+🔹 Feature Files
+Written in Gherkin syntax (.feature) to describe test scenarios in plain English.
+
+🔹 Step Definitions
+Java methods that bind to Gherkin steps, located in com.mercedes.oal.tests.
+
+🔹 Hooks
+CucumberHooks.java manages browser lifecycle:
+- @Before: Launch browser
+- @After: Capture screenshot on failure, close browser
+
+🔹 Test Runner
+TestRunner.java integrates Cucumber with TestNG:
+`java
+@CucumberOptions(
+  features = "src/test/resources/features",
+  glue = {"com.mercedes.oal.hooks", "com.mercedes.oal.tests"},
+  plugin = {"pretty", "html:target/cucumber-reports.html"},
+  publish = true
+)
+`
+
+---
+
+🚀 How to Execute Tests
+
+🛠 Prerequisites
+- Java 21 installed
+- Maven installed
+- Chrome browser (or update config for other browsers)
+
+▶️ Run Tests
+`bash
+mvn clean test
+`
+
+📊 View Reports
+- Cucumber HTML: target/cucumber-reports.html
+- Extent Report: reports/ExtentReport.html
+- Screenshots: screenshots/
+- Logs: logs/
