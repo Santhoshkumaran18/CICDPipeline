@@ -1,1 +1,1 @@
-(?s)\{[^}]*"outletIsActive"\s*:\s*false[^}]*"keyTypeId"\s*:\s*"cofico"[^}]*"type"\s*:\s*"keyType"[^}]*\}
+\{[^{}]*"outletIsActive"\s*:\s*false[^{}]*"keyType"\s*:\s*"COFICO"[^{}]*\}
